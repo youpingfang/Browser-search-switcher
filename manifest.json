@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "自定义搜索引擎",
+  "version": "0.1.0",
+  "description": "选中文本后快速切换搜索引擎，支持浮层按钮与自定义排序。",
+  "permissions": ["contextMenus", "storage"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_page": "options.html"
+}

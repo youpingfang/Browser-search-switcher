@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="860" viewBox="0 0 640 860">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f2f6ff"/>
+      <stop offset="1" stop-color="#eaf7f1"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="860" rx="28" fill="url(#bg)"/>
+  <rect x="48" y="48" width="544" height="764" rx="22" fill="#ffffff" stroke="#d9e2f2"/>
+  <text x="320" y="120" font-size="24" text-anchor="middle" fill="#16324f" font-family="Arial, sans-serif">Alipay QR Placeholder</text>
+  <text x="320" y="156" font-size="16" text-anchor="middle" fill="#4d6b86" font-family="Arial, sans-serif">Replace with your real QR code</text>
+  <rect x="140" y="220" width="360" height="360" rx="16" fill="#f4f7fb" stroke="#c9d6ea"/>
+  <path d="M200 280h40v40h-40zM400 280h40v40h-40zM200 480h40v40h-40z" fill="#b8c7dd"/>
+  <path d="M260 340h120v120H260z" fill="#d5e0ef"/>
+  <text x="320" y="660" font-size="14" text-anchor="middle" fill="#6b7c93" font-family="Arial, sans-serif">This is a placeholder image</text>
+</svg>

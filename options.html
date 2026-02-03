@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>自定义搜索引擎 - 设置</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main class="container">
+      <div class="topbar">
+        <h1 data-i18n="title">Search Engine Settings</h1>
+        <div class="topbar-actions">
+          <label class="theme-switch">
+            <span data-i18n="theme_label">Theme</span>
+            <select id="theme">
+              <option value="system" data-i18n="theme_system">System</option>
+              <option value="light" data-i18n="theme_light">Light</option>
+              <option value="dark" data-i18n="theme_dark">Dark</option>
+            </select>
+          </label>
+          <label class="theme-switch">
+            <span data-i18n="lang_label">Language</span>
+            <select id="language">
+              <option value="en" data-i18n="lang_en">English</option>
+              <option value="zh" data-i18n="lang_zh">中文</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <p class="support-copy support-inline" data-i18n="support_copy">
+        每次页面选择文字搜索，却还要右键翻一长串菜单，真的很打断思路。我做这个小工具，目的就是想让搜索更顺手，换个引擎直接搜索一步到位，减少搜索的痛苦感，节省你的精力。如果它确实帮到你，也欢迎扫二维码支持一下，或者添加好友发个红包，我会继续把它做得更好！
+      </p>
+
+      <section class="quick-add">
+        <h2 data-i18n="quick_add">Quick Add</h2>
+        <div class="quick-buttons" id="quick-buttons"></div>
+      </section>
+
+      <section class="support support-float support-float-right" id="support-wechat">
+        <h2 data-i18n="wechat_title">WeChat</h2>
+        <p data-i18n="wechat_desc">WeChat add-friend QR code.</p>
+        <div class="support-card">
+          <img src="assets/微信好友.JPG" alt="WeChat Friend QR" />
+          <div class="support-note" data-i18n="wechat_friend_label">微信加好友</div>
+        </div>
+      </section>
+
+      <section class="settings">
+        <h2 data-i18n="display">Display</h2>
+        <label class="setting-row">
+          <span data-i18n="floating_count">Floating buttons count</span>
+          <input id="max-buttons" type="number" min="1" max="10" value="3" />
+        </label>
+        <p class="hint hint-inline" data-i18n="hint">Each engine must include a name and a URL template with <code>%s</code>.</p>
+      </section>
+
+      <section class="support support-float" id="support">
+        <h2 data-i18n="support_title">Support</h2>
+        <p data-i18n="support_desc">If this extension helps you, you can support the author.</p>
+        <div class="support-card">
+          <img src="assets/支付宝收款码.JPG" alt="Alipay QR" />
+          <div class="support-note" data-i18n="alipay_label">支付宝收款码</div>
+          <img src="assets/微信收款码.JPG" alt="WeChat Pay QR" />
+          <div class="support-note" data-i18n="wechat_pay_label">微信收款码</div>
+        </div>
+      </section>
+
+      <div id="list"></div>
+
+      <div class="actions">
+        <button id="add" data-i18n="add_engine">Add Engine</button>
+        <button id="save" class="primary" data-i18n="save">Save</button>
+        <button id="reset" class="ghost" data-i18n="reset">Reset Defaults</button>
+      </div>
+
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+    </main>
+
+    <template id="row-template">
+      <div class="row" draggable="true">
+        <div class="reorder">
+          <button class="drag" title="Drag to reorder" aria-label="Drag to reorder">≡</button>
+          <div class="move">
+            <button class="move-up" title="Move up" aria-label="Move up">↑</button>
+            <button class="move-down" title="Move down" aria-label="Move down">↓</button>
+          </div>
+        </div>
+        <label>
+          <span data-i18n="name_label">Name</span>
+          <input type="text" class="name" placeholder="Google" data-i18n-placeholder="name_placeholder" />
+        </label>
+        <label>
+          <span data-i18n="template_label">Template</span>
+          <input type="text" class="template" placeholder="https://www.google.com/search?q=%s" data-i18n-placeholder="template_placeholder" />
+        </label>
+        <button class="remove" data-i18n="remove">Remove</button>
+      </div>
+    </template>
+
+    <script src="options.js"></script>
+  </body>
+</html>
