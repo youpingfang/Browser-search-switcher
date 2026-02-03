@@ -3,6 +3,24 @@ let maxButtons = 3;
 let floatEl = null;
 let lastSelection = "";
 let dropdownEl = null;
+let uiLang = "zh";
+
+const LABELS = {
+  zh: {
+    copy: "复制",
+    more: "更多",
+    settings: "设置"
+  },
+  en: {
+    copy: "Copy",
+    more: "More",
+    settings: "Settings"
+  }
+};
+
+function t(key) {
+  return (LABELS[uiLang] && LABELS[uiLang][key]) || LABELS.zh[key];
+}
 
 function getTopEngines() {
   return enginesCache.slice(0, maxButtons);
@@ -15,6 +33,7 @@ async function loadEngines() {
   maxButtons = Number.isFinite(settings.maxButtons) ? settings.maxButtons : 3;
   if (maxButtons < 1) maxButtons = 1;
   window.__mesFloatPosition = settings.floatPosition || "top";
+  uiLang = settings.lang || "zh";
   enginesCache = engines.filter((e) => e && e.name && e.template);
 }
 
@@ -40,7 +59,7 @@ function renderButtons(selectionText) {
 
   const copyBtn = document.createElement("button");
   copyBtn.type = "button";
-  copyBtn.textContent = "复制";
+  copyBtn.textContent = t("copy");
   copyBtn.addEventListener("click", async (event) => {
     event.stopPropagation();
     try {
@@ -68,7 +87,6 @@ function renderButtons(selectionText) {
       const query = encodeURIComponent(selectionText);
       const url = engine.template.replace(/%s/g, query);
       chrome.runtime.sendMessage({ type: "open-url", url });
-      clearFloat();
     });
     floatEl.appendChild(btn);
   });
@@ -79,7 +97,7 @@ function renderButtons(selectionText) {
     moreWrap.className = "mes-more";
     const moreBtn = document.createElement("button");
     moreBtn.type = "button";
-    moreBtn.textContent = "更多";
+    moreBtn.textContent = t("more");
     moreBtn.addEventListener("click", (event) => {
       event.stopPropagation();
       if (dropdownEl) {
@@ -98,29 +116,23 @@ function renderButtons(selectionText) {
           const query = encodeURIComponent(selectionText);
           const url = engine.template.replace(/%s/g, query);
           chrome.runtime.sendMessage({ type: "open-url", url });
-          clearFloat();
         });
         dropdownEl.appendChild(item);
       });
-
-      const divider = document.createElement("div");
-      divider.className = "mes-divider";
-      dropdownEl.appendChild(divider);
-
-      const settingsBtn = document.createElement("button");
-      settingsBtn.type = "button";
-      settingsBtn.textContent = "设置";
-      settingsBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        chrome.runtime.sendMessage({ type: "open-options" });
-        clearFloat();
-      });
-      dropdownEl.appendChild(settingsBtn);
 
       moreWrap.appendChild(dropdownEl);
     });
     moreWrap.appendChild(moreBtn);
     floatEl.appendChild(moreWrap);
+
+    const settingsBtn = document.createElement("button");
+    settingsBtn.type = "button";
+    settingsBtn.textContent = t("settings");
+    settingsBtn.addEventListener("click", (event) => {
+      event.stopPropagation();
+      chrome.runtime.sendMessage({ type: "open-options" });
+    });
+    floatEl.appendChild(settingsBtn);
   }
 
 }
