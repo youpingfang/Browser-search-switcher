@@ -4,6 +4,12 @@
   "version": "0.1.0",
   "description": "选中文本后快速切换搜索引擎，支持浮层按钮与自定义排序。",
   "permissions": ["contextMenus", "storage"],
+  "icons": {
+    "16": "assets/icon-16.png",
+    "32": "assets/icon-32.png",
+    "48": "assets/icon-48.png",
+    "128": "assets/icon-128.png"
+  },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],

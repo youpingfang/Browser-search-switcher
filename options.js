@@ -74,6 +74,10 @@ const QUICK_ENGINES = [
   {
     name: "Google Scholar",
     template: "https://scholar.google.com/scholar?q=%s"
+  },
+  {
+    name: "Douyin",
+    template: "https://www.douyin.com/search/%s"
   }
 ];
 
