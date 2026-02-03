@@ -73,9 +73,18 @@
   padding: 6px 10px;
   background: #ffffff;
   color: #111111;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
   font-size: 12px;
   cursor: pointer;
+}
+
+.mes-float button:active {
+  transform: translateY(1px);
+  box-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.25),
+    inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .mes-float button:hover {
