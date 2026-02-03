@@ -50,6 +50,32 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
   }
 });
 
+async function openNextToTab(tabId, url) {
+  try {
+    const tab = await chrome.tabs.get(tabId);
+    chrome.tabs.create({
+      url,
+      index: tab.index + 1,
+      openerTabId: tab.id
+    });
+  } catch (err) {
+    chrome.tabs.create({ url });
+  }
+}
+
+async function openAtEnd(url) {
+  chrome.tabs.create({ url });
+}
+
+async function openWithPreference(tabId, url) {
+  const result = await chrome.storage.sync.get(["settings"]);
+  const position = result.settings?.tabPosition || "next";
+  if (position === "end") {
+    return openAtEnd(url);
+  }
+  return openNextToTab(tabId, url);
+}
+
 chrome.contextMenus.onClicked.addListener((info) => {
   if (!info.selectionText) return;
   const menuId = String(info.menuItemId || "");
@@ -61,13 +87,17 @@ chrome.contextMenus.onClicked.addListener((info) => {
     if (!engine || !engine.template) return;
     const query = encodeURIComponent(info.selectionText);
     const url = engine.template.replace(/%s/g, query);
-    chrome.tabs.create({ url });
+    openWithPreference(info.tabId, url);
   });
 });
 
-chrome.runtime.onMessage.addListener((message) => {
+chrome.runtime.onMessage.addListener((message, sender) => {
   if (!message || message.type !== "open-url" || !message.url) return;
-  chrome.tabs.create({ url: message.url });
+  if (sender && sender.tab && sender.tab.id != null) {
+    openWithPreference(sender.tab.id, message.url);
+  } else {
+    chrome.tabs.create({ url: message.url });
+  }
 });
 
 chrome.runtime.onMessage.addListener((message) => {

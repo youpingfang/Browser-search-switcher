@@ -9,6 +9,7 @@ const maxButtonsInput = document.getElementById("max-buttons");
 const themeSelect = document.getElementById("theme");
 const languageSelect = document.getElementById("language");
 const floatPositionSelect = document.getElementById("float-position");
+const tabPositionSelect = document.getElementById("tab-position");
 
 const DEFAULT_ENGINES = [
   {
@@ -61,6 +62,18 @@ const QUICK_ENGINES = [
   {
     name: "JD",
     template: "https://search.jd.com/Search?keyword=%s"
+  },
+  {
+    name: "Twitter",
+    template: "https://twitter.com/search?q=%s"
+  },
+  {
+    name: "YouTube",
+    template: "https://www.youtube.com/results?search_query=%s"
+  },
+  {
+    name: "Google Scholar",
+    template: "https://scholar.google.com/scholar?q=%s"
   }
 ];
 
@@ -81,6 +94,9 @@ const I18N = {
     float_position: "Floating position",
     float_top: "Above selection",
     float_bottom: "Below selection",
+    tab_position: "New tab position",
+    tab_next: "Next to current tab",
+    tab_end: "End of window",
     add_engine: "Add Engine",
     save: "Save",
     reset: "Reset Defaults",
@@ -89,6 +105,7 @@ const I18N = {
     template_label: "Template",
     template_placeholder: "https://www.google.com/search?q=%s",
     remove: "Remove",
+    status_exists: "Already added.",
     support_title: "Support",
     support_desc: "If this extension helps you, you can support the author.",
     alipay_label: "Alipay QR",
@@ -119,6 +136,9 @@ const I18N = {
     float_position: "浮层位置",
     float_top: "上方",
     float_bottom: "下方",
+    tab_position: "新标签位置",
+    tab_next: "紧跟当前标签",
+    tab_end: "窗口末尾",
     add_engine: "添加引擎",
     save: "保存",
     reset: "恢复默认",
@@ -127,6 +147,7 @@ const I18N = {
     template_label: "模板",
     template_placeholder: "https://www.google.com/search?q=%s",
     remove: "删除",
+    status_exists: "已添加过。",
     support_title: "支持作者",
     support_desc: "如果这个插件对你有帮助，欢迎支持作者。",
     alipay_label: "支付宝收款码",
@@ -149,7 +170,8 @@ let currentSettings = {
   theme: "system",
   lang: "zh",
   autoSaveNotified: false,
-  floatPosition: "top"
+  floatPosition: "top",
+  tabPosition: "next"
 };
 
 function t(key) {
@@ -287,6 +309,16 @@ function createRow(engine = { name: "", template: "" }) {
 }
 
 function appendEngine(engine) {
+  const existing = getEnginesFromUI();
+  const duplicate = existing.some(
+    (item) =>
+      item.name.toLowerCase() === engine.name.toLowerCase() ||
+      item.template === engine.template
+  );
+  if (duplicate) {
+    setStatus("status_exists");
+    return;
+  }
   listEl.appendChild(createRow(engine));
   scheduleAutosave();
 }
@@ -340,7 +372,8 @@ async function loadEngines() {
     theme: "system",
     lang: "zh",
     autoSaveNotified: false,
-    floatPosition: "top"
+    floatPosition: "top",
+    tabPosition: "next"
   };
   currentSettings = {
     maxButtons: 3,
@@ -348,6 +381,7 @@ async function loadEngines() {
     lang: "zh",
     autoSaveNotified: false,
     floatPosition: "top",
+    tabPosition: "next",
     ...settings
   };
 
@@ -361,6 +395,7 @@ async function loadEngines() {
   languageSelect.value = currentSettings.lang || "en";
   applyLanguage(currentSettings.lang || "en");
   floatPositionSelect.value = currentSettings.floatPosition || "top";
+  tabPositionSelect.value = currentSettings.tabPosition || "next";
 }
 
 function getEnginesFromUI() {
@@ -381,7 +416,8 @@ function getSettingsFromUI() {
     maxButtons,
     theme: themeSelect.value || "system",
     lang: languageSelect.value || "en",
-    floatPosition: floatPositionSelect.value || "top"
+    floatPosition: floatPositionSelect.value || "top",
+    tabPosition: tabPositionSelect.value || "next"
   };
 }
 
@@ -421,6 +457,7 @@ maxButtonsInput.addEventListener("input", scheduleAutosave);
 themeSelect.addEventListener("change", scheduleAutosave);
 languageSelect.addEventListener("change", scheduleAutosave);
 floatPositionSelect.addEventListener("change", scheduleAutosave);
+tabPositionSelect.addEventListener("change", scheduleAutosave);
 
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
   if (themeSelect.value === "system") {

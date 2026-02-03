@@ -52,6 +52,20 @@
           <span data-i18n="floating_count">Floating buttons count</span>
           <input id="max-buttons" type="number" min="1" max="10" value="3" />
         </label>
+        <label class="setting-row">
+          <span data-i18n="float_position">Floating position</span>
+          <select id="float-position">
+            <option value="top" data-i18n="float_top">Above selection</option>
+            <option value="bottom" data-i18n="float_bottom">Below selection</option>
+          </select>
+        </label>
+        <label class="setting-row">
+          <span data-i18n="tab_position">New tab position</span>
+          <select id="tab-position">
+            <option value="next" data-i18n="tab_next">Next to current tab</option>
+            <option value="end" data-i18n="tab_end">End of window</option>
+          </select>
+        </label>
         <p class="hint hint-inline" data-i18n="hint">Each engine must include a name and a URL template with <code>%s</code>.</p>
       </section>
 
