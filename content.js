@@ -4,17 +4,22 @@ let floatEl = null;
 let lastSelection = "";
 let dropdownEl = null;
 let uiLang = "zh";
+let translateProvider = "google";
 
 const LABELS = {
   zh: {
     copy: "复制",
     more: "更多",
-    settings: "设置"
+    settings: "设置",
+    translate: "翻译",
+    translate_back: "原页面"
   },
   en: {
     copy: "Copy",
     more: "More",
-    settings: "Settings"
+    settings: "Settings",
+    translate: "Translate Page",
+    translate_back: "Original Page"
   }
 };
 
@@ -34,6 +39,7 @@ async function loadEngines() {
   if (maxButtons < 1) maxButtons = 1;
   window.__mesFloatPosition = settings.floatPosition || "top";
   uiLang = settings.lang || "zh";
+  translateProvider = settings.translateProvider || "google";
   enginesCache = engines.filter((e) => e && e.name && e.template);
 }
 
@@ -91,6 +97,26 @@ function renderButtons(selectionText) {
     floatEl.appendChild(btn);
   });
 
+  const translateBtn = document.createElement("button");
+  translateBtn.type = "button";
+  translateBtn.textContent = t("translate");
+  translateBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const query = encodeURIComponent(selectionText);
+    const hasCJK = /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]/.test(selectionText);
+    const targetLang = hasCJK ? "en" : "zh-CN";
+    let url = "";
+    if (translateProvider === "baidu") {
+      url = `https://fanyi.baidu.com/#auto/${encodeURIComponent(targetLang)}/${query}`;
+    } else if (translateProvider === "bing") {
+      url = `https://www.bing.com/translator?from=auto&to=${encodeURIComponent(targetLang)}&text=${query}`;
+    } else {
+      url = `https://translate.google.com/?sl=auto&tl=${encodeURIComponent(targetLang)}&text=${query}&op=translate`;
+    }
+    chrome.runtime.sendMessage({ type: "open-url", url });
+  });
+  floatEl.appendChild(translateBtn);
+
   const remaining = enginesCache.slice(engines.length);
   if (remaining.length) {
     const moreWrap = document.createElement("div");
@@ -120,19 +146,23 @@ function renderButtons(selectionText) {
         dropdownEl.appendChild(item);
       });
 
+      const divider = document.createElement("div");
+      divider.className = "mes-divider";
+      dropdownEl.appendChild(divider);
+
+      const settingsBtn = document.createElement("button");
+      settingsBtn.type = "button";
+      settingsBtn.textContent = t("settings");
+      settingsBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        chrome.runtime.sendMessage({ type: "open-options" });
+      });
+      dropdownEl.appendChild(settingsBtn);
+
       moreWrap.appendChild(dropdownEl);
     });
     moreWrap.appendChild(moreBtn);
     floatEl.appendChild(moreWrap);
-
-    const settingsBtn = document.createElement("button");
-    settingsBtn.type = "button";
-    settingsBtn.textContent = t("settings");
-    settingsBtn.addEventListener("click", (event) => {
-      event.stopPropagation();
-      chrome.runtime.sendMessage({ type: "open-options" });
-    });
-    floatEl.appendChild(settingsBtn);
   }
 
 }
