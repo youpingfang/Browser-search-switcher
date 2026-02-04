@@ -5,15 +5,16 @@
 ![选中文字后浮层](assets/截屏.png)
 
 ## 功能
-- 选中文本后显示浮层按钮（默认显示前 3 个，可调数量）
-- 一键复制选中文本
-- 浮层位置可选（上方/下方）
-- 新标签位置可选（紧跟当前标签 / 窗口末尾）
-- 点击“更多”下拉切换其它引擎，并可进入设置页
-- 右键菜单也提供搜索引擎入口
-- 引擎可自定义、排序（拖拽 / 上下移动）
-- 自动保存 + 语言/主题切换
-- 快速添加常用引擎
+- **选中文本后显示浮层按钮（默认显示前 3 个，可调数量）**
+- **一键复制选中文本**
+- **浮层位置可选（上方/下方）**
+- **新标签位置可选（紧跟当前标签 / 窗口末尾）**
+- **翻译按钮：支持 Google / 百度 / Bing，自动中英互译**
+- **点击“更多”下拉切换其它引擎，并可进入设置页**
+- **右键菜单也提供搜索引擎入口**
+- **引擎可自定义、排序（拖拽 / 上下移动）**
+- **自动保存 + 语言/主题切换**
+- **快速添加常用引擎**
 
 ## 安装（开发者模式）
 1. 打开 `chrome://extensions`
@@ -31,11 +32,13 @@ https://www.7longwen.com/d/zen-me-zai-chrome-shang-an-zhuang-cha-jian.html
 
 ## 设置
 - 浮层按钮数量、浮层位置可配置
+- 翻译引擎可配置（Google / 百度 / Bing）
+- 目标语言自动切换：中文→英文，英文→中文
 - 引擎列表可添加/删除/排序
 - 支持快速添加常用引擎
 
 ## 默认/快速添加引擎
-Google、Bing、Wikipedia、Zhihu、Bilibili、GitHub、Taobao、JD、Twitter、YouTube、Google Scholar
+Google、Bing、Wikipedia、Zhihu、Bilibili、GitHub、Taobao、JD、Twitter、YouTube、Google Scholar、Douyin
 
 ## 文件结构
 - `manifest.json` 扩展清单
