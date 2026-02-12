@@ -10,6 +10,8 @@ let hideTimer = null;
 const RETURN_TIMEOUT_MS = 3000;
 const DEFAULT_FLOAT_ORDER = ["copy", "translate"];
 let floatOrder = DEFAULT_FLOAT_ORDER.slice();
+let floatDragging = null;
+let floatDragOver = null;
 
 const LABELS = {
   zh: {
@@ -64,6 +66,31 @@ function normalizeFloatOrder(order) {
     if (!seen.has(item)) result.push(item);
   });
   return result;
+}
+
+
+function getFloatAfterElement(container, y) {
+  const items = [...container.querySelectorAll("[data-order-id]:not(.mes-dragging)")];
+  return items.reduce(
+    (closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+      if (offset < 0 && offset > closest.offset) {
+        return { offset, element: child };
+      }
+      return closest;
+    },
+    { offset: Number.NEGATIVE_INFINITY, element: null }
+  ).element;
+}
+
+function persistFloatOrder(order) {
+  floatOrder = normalizeFloatOrder(order);
+  if (typeof chrome === "undefined" || !chrome.storage || !chrome.storage.sync) return;
+  chrome.storage.sync.get(["settings"], (result) => {
+    const settings = (result && result.settings) || {};
+    chrome.storage.sync.set({ settings: { ...settings, floatOrder } });
+  });
 }
 
 async function loadEngines() {
@@ -127,6 +154,8 @@ function renderButtons(selectionText) {
     const copyBtn = document.createElement("button");
     copyBtn.type = "button";
     copyBtn.textContent = t("copy");
+    copyBtn.setAttribute("draggable", "true");
+    copyBtn.dataset.orderId = "copy";
     copyBtn.addEventListener("click", async (event) => {
       event.stopPropagation();
       try {
@@ -153,6 +182,8 @@ function renderButtons(selectionText) {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.textContent = engine.name;
+      btn.setAttribute("draggable", "true");
+      btn.dataset.orderId = `engine:${idx}`;
       btn.addEventListener("click", (event) => {
         event.stopPropagation();
         const query = encodeURIComponent(selectionText);
@@ -167,6 +198,8 @@ function renderButtons(selectionText) {
     const translateBtn = document.createElement("button");
     translateBtn.type = "button";
     translateBtn.textContent = t("translate");
+    translateBtn.setAttribute("draggable", "true");
+    translateBtn.dataset.orderId = "translate";
     translateBtn.addEventListener("click", (event) => {
       event.stopPropagation();
       const query = encodeURIComponent(selectionText);
@@ -233,6 +266,7 @@ function renderButtons(selectionText) {
     floatEl.appendChild(moreWrap);
   };
 
+
   normalizeFloatOrder(floatOrder).forEach((item) => {
     if (item === "copy") appendCopy();
     if (item === "translate") appendTranslate();
@@ -248,6 +282,8 @@ function renderButtons(selectionText) {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.textContent = engine.name;
+      btn.setAttribute("draggable", "true");
+      btn.dataset.orderId = `engine:${idx}`;
       btn.addEventListener("click", (event) => {
         event.stopPropagation();
         const query = encodeURIComponent(selectionText);
@@ -258,7 +294,60 @@ function renderButtons(selectionText) {
     }
   });
   appendMore();
+
+  if (floatEl && !floatEl.dataset.dragReady) {
+    floatEl.dataset.dragReady = "1";
+    floatEl.addEventListener("dragstart", (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      if (!target.dataset.orderId) return;
+      floatDragging = target;
+      target.classList.add("mes-dragging");
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/plain", "");
+    });
+
+    floatEl.addEventListener("dragover", (event) => {
+      event.preventDefault();
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      const candidate = target.closest("[data-order-id]");
+      if (!candidate || candidate === floatDragging) return;
+      floatDragOver = candidate;
+    });
+
+    floatEl.addEventListener("drop", (event) => {
+      event.preventDefault();
+      if (!floatDragging || !floatDragOver || floatDragging === floatDragOver) return;
+      const a = floatDragging;
+      const b = floatDragOver;
+      const aNext = a.nextSibling;
+      const bNext = b.nextSibling;
+      const parent = a.parentNode;
+      if (!parent) return;
+      if (aNext === b) {
+        parent.insertBefore(b, a);
+      } else if (bNext === a) {
+        parent.insertBefore(a, b);
+      } else {
+        parent.insertBefore(a, bNext);
+        parent.insertBefore(b, aNext);
+      }
+      const order = Array.from(parent.querySelectorAll("[data-order-id]")).map(
+        (el) => el.dataset.orderId
+      );
+      persistFloatOrder(order);
+    });
+
+    floatEl.addEventListener("dragend", () => {
+      if (!floatDragging) return;
+      floatDragging.classList.remove("mes-dragging");
+      floatDragging = null;
+      floatDragOver = null;
+    });
+  }
 }
+
 
 function positionFloat(rect) {
   if (!floatEl) return;

@@ -80,6 +80,14 @@
   cursor: pointer;
 }
 
+.mes-float button[draggable="true"] {
+  cursor: grab;
+}
+
+.mes-float button.mes-dragging {
+  opacity: 0.6;
+}
+
 .mes-float button:active {
   transform: translateY(1px);
   box-shadow:
