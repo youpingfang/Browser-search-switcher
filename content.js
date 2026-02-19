@@ -158,15 +158,6 @@ function renderButtons(selectionText) {
     copyBtn.dataset.orderId = "copy";
     copyBtn.addEventListener("click", async (event) => {
       event.stopPropagation();
-      const trimmed = selectionText.trim();
-      const urlMatch = /^(https?:\/\/|www\.)[^\s/$.?#].[^\s]*$/i.test(trimmed)
-        || /^[a-z0-9-]+(\.[a-z0-9-]+)+(:\d+)?(\/[^\s]*)?$/i.test(trimmed);
-      if (urlMatch) {
-        const url = trimmed.startsWith("http") ? trimmed : `https://${trimmed}`;
-        chrome.runtime.sendMessage({ type: "open-url", url });
-        clearFloat();
-        return;
-      }
       try {
         await navigator.clipboard.writeText(selectionText);
       } catch (err) {
